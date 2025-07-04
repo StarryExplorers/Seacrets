@@ -7,9 +7,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-192.png" />
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', sans-serif;
       margin: 0;
@@ -18,10 +16,7 @@
       color: white;
       text-align: center;
     }
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
+    h1 { font-size: 2.5rem; margin-bottom: 1rem; }
     section {
       margin: 2rem auto;
       padding: 1.5rem;
@@ -47,13 +42,14 @@
       border-radius: 1rem;
       margin-top: 1rem;
     }
-    iframe {
-      width: 100%;
+    ul {
+      text-align: left;
       max-width: 600px;
-      height: 315px;
-      margin-top: 1rem;
-      border-radius: 1rem;
-      border: none;
+      margin: 1rem auto;
+    }
+    a {
+      color: #e0ffff;
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -63,9 +59,10 @@
   <!-- Sea Creature Info -->
   <section id="creature">
     <h2>🦑 Search a Sea Creature</h2>
-    <input type="text" id="creature-query" placeholder="e.g. Octopus" />
+    <input type="text" id="creature-query" placeholder="e.g. Dolphin" />
     <button onclick="searchCreature()">Search</button>
     <div id="creature-result"></div>
+    <div id="youtube-link" style="margin-top: 1rem;"></div>
   </section>
 
   <!-- Ocean Image -->
@@ -75,15 +72,6 @@
     <div id="image-result"></div>
   </section>
 
-  <!-- Ocean Sounds -->
-  <section id="sounds">
-    <h2>🎧 Ocean Sound</h2>
-    <audio controls>
-      <source src="https://www.fesliyanstudios.com/play-mp3/387" type="audio/mpeg">
-      Your browser does not support the audio tag.
-    </audio>
-  </section>
-
   <!-- Ocean Trivia -->
   <section id="trivia">
     <h2>📘 Ocean Fact of the Day</h2>
@@ -91,16 +79,21 @@
     <button onclick="randomFact()">🌟 Show Fact</button>
   </section>
 
-  <!-- Live Ocean Cam -->
-  <section id="livecam">
-    <h2>🔴 Live Ocean Cam</h2>
-    <iframe src="https://www.youtube.com/embed/2gHKDHMGcY8" allowfullscreen></iframe>
+  <!-- Cool Ocean Videos -->
+  <section id="ocean-videos">
+    <h2>🌐 Cool Ocean Videos</h2>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=Z5Z3Zdr2iDU" target="_blank">The Secret Life of Ocean Creatures</a></li>
+      <li><a href="https://www.youtube.com/watch?v=jjj0xVM4x1I" target="_blank">Underwater Sounds of Whales & Dolphins</a></li>
+      <li><a href="https://www.youtube.com/watch?v=7bMMZz2vh4Q" target="_blank">Deep Ocean Mysteries | Nat Geo</a></li>
+      <li><a href="https://www.youtube.com/watch?v=ZLaG8W4kfFo" target="_blank">Ocean Documentary for Kids</a></li>
+    </ul>
   </section>
 
   <!-- Protect the Ocean -->
   <section id="tips">
     <h2>💙 Tips to Protect the Ocean</h2>
-    <ul style="text-align: left; max-width: 600px; margin: auto;">
+    <ul>
       <li>Use less plastic 🌍</li>
       <li>Eat sustainable seafood 🐟</li>
       <li>Don’t litter at beaches 🏖️</li>
@@ -112,9 +105,12 @@
     async function searchCreature() {
       const query = document.getElementById("creature-query").value.trim();
       const result = document.getElementById("creature-result");
+      const yt = document.getElementById("youtube-link");
       if (!query) return (result.innerHTML = "Type something 🐠");
 
       result.innerHTML = "Searching...";
+      yt.innerHTML = "";
+
       try {
         const res = await fetch(
           `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`
@@ -125,6 +121,10 @@
           <p>${data.extract}</p>
           ${data.thumbnail ? `<img src="${data.thumbnail.source}" alt="${data.title}" />` : ""}
         `;
+
+        // YouTube Search link
+        const ytQuery = encodeURIComponent(`${query} ocean sound`);
+        yt.innerHTML = `<a href="https://www.youtube.com/results?search_query=${ytQuery}" target="_blank">🔊 Click to watch or hear a ${query} on YouTube</a>`;
       } catch {
         result.innerHTML = "Couldn’t find anything! 😕";
       }
@@ -133,7 +133,6 @@
     async function getOceanImage() {
       const container = document.getElementById("image-result");
       container.innerHTML = "Fetching image...";
-
       try {
         const res = await fetch("https://source.unsplash.com/600x400/?ocean,sea,marine");
         container.innerHTML = `<img src="${res.url}" alt="Ocean Image"/>`;
