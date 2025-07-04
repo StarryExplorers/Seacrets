@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Seacrets 🌊</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon-192.png" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 1rem;
+      background: linear-gradient(to right, #007991, #78ffd6);
+      color: white;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    section {
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background: #ffffff11;
+      border-radius: 1rem;
+      max-width: 800px;
+    }
+    input, button {
+      padding: 0.8rem;
+      margin: 0.5rem;
+      font-size: 1rem;
+      border-radius: 0.7rem;
+      border: none;
+    }
+    button {
+      background: #006d77;
+      color: white;
+      cursor: pointer;
+    }
+    img {
+      width: 100%;
+      max-width: 500px;
+      border-radius: 1rem;
+      margin-top: 1rem;
+    }
+    iframe {
+      width: 100%;
+      max-width: 600px;
+      height: 315px;
+      margin-top: 1rem;
+      border-radius: 1rem;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌊 Seacrets</h1>
+
+  <!-- Sea Creature Info -->
+  <section id="creature">
+    <h2>🦑 Search a Sea Creature</h2>
+    <input type="text" id="creature-query" placeholder="e.g. Octopus" />
+    <button onclick="searchCreature()">Search</button>
+    <div id="creature-result"></div>
+  </section>
+
+  <!-- Ocean Image -->
+  <section id="image">
+    <h2>📸 Random Ocean Image</h2>
+    <button onclick="getOceanImage()">Show Image</button>
+    <div id="image-result"></div>
+  </section>
+
+  <!-- Ocean Sounds -->
+  <section id="sounds">
+    <h2>🎧 Ocean Sound</h2>
+    <audio controls>
+      <source src="https://www.fesliyanstudios.com/play-mp3/387" type="audio/mpeg">
+      Your browser does not support the audio tag.
+    </audio>
+  </section>
+
+  <!-- Ocean Trivia -->
+  <section id="trivia">
+    <h2>📘 Ocean Fact of the Day</h2>
+    <p id="fact">Click below for a cool ocean fact!</p>
+    <button onclick="randomFact()">🌟 Show Fact</button>
+  </section>
+
+  <!-- Live Ocean Cam -->
+  <section id="livecam">
+    <h2>🔴 Live Ocean Cam</h2>
+    <iframe src="https://www.youtube.com/embed/2gHKDHMGcY8" allowfullscreen></iframe>
+  </section>
+
+  <!-- Protect the Ocean -->
+  <section id="tips">
+    <h2>💙 Tips to Protect the Ocean</h2>
+    <ul style="text-align: left; max-width: 600px; margin: auto;">
+      <li>Use less plastic 🌍</li>
+      <li>Eat sustainable seafood 🐟</li>
+      <li>Don’t litter at beaches 🏖️</li>
+      <li>Support ocean-friendly brands 🌱</li>
+    </ul>
+  </section>
+
+  <script>
+    async function searchCreature() {
+      const query = document.getElementById("creature-query").value.trim();
+      const result = document.getElementById("creature-result");
+      if (!query) return (result.innerHTML = "Type something 🐠");
+
+      result.innerHTML = "Searching...";
+      try {
+        const res = await fetch(
+          `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`
+        );
+        const data = await res.json();
+        result.innerHTML = `
+          <h3>${data.title}</h3>
+          <p>${data.extract}</p>
+          ${data.thumbnail ? `<img src="${data.thumbnail.source}" alt="${data.title}" />` : ""}
+        `;
+      } catch {
+        result.innerHTML = "Couldn’t find anything! 😕";
+      }
+    }
+
+    async function getOceanImage() {
+      const container = document.getElementById("image-result");
+      container.innerHTML = "Fetching image...";
+
+      try {
+        const res = await fetch("https://source.unsplash.com/600x400/?ocean,sea,marine");
+        container.innerHTML = `<img src="${res.url}" alt="Ocean Image"/>`;
+      } catch {
+        container.innerHTML = "Could not load image 😔";
+      }
+    }
+
+    const facts = [
+      "More than 80% of the ocean is unexplored! 🌊",
+      "The blue whale is the largest animal on Earth. 🐋",
+      "The Mariana Trench is deeper than Mount Everest is tall. ⛏️",
+      "Coral reefs are made of tiny animals called polyps! 🐠",
+      "Octopuses have three hearts and blue blood! 💙"
+    ];
+
+    function randomFact() {
+      const fact = facts[Math.floor(Math.random() * facts.length)];
+      document.getElementById("fact").textContent = fact;
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+  </script>
+</body>
+</html>
